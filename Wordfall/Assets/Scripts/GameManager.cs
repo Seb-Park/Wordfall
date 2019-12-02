@@ -19,11 +19,14 @@ public class GameManager : MonoBehaviour
     public List<LetterTile> selectedTiles;
     public List<Vector2> selectedTilePoints;
 
+    Dictionary<string, bool> wordDictionary;
+
     Dictionary<string, Color> letterColorPairs = new Dictionary<string, Color>();
 
     // Start is called before the first frame update
     void Start()
     {
+        wordDictionary = new Dictionary<string, bool>();
         //letterColorPairs.Add("a", Color.red);
         line.positionCount = 0;
         line.positionCount = 1;
