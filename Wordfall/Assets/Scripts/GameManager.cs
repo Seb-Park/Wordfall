@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.IO;
+//using UnityEditor;
 //using System.Linq;
 
 public enum GameState{PLAYERTURN, PHYSICS, WIN, LOSE}
@@ -18,6 +20,7 @@ public class GameManager : MonoBehaviour
     public TileSpawner ts;
 
     public TextMeshProUGUI currentWordText;
+    public TMP_FontAsset transparentFont, greenFont;
     public LineRenderer line;
 
     public List<LetterTile> selectedTiles;
@@ -27,16 +30,38 @@ public class GameManager : MonoBehaviour
 
     Dictionary<string, Color> letterColorPairs = new Dictionary<string, Color>();
 
+    public TextAsset dictionaryFile;
+
     string alphabet = "abcdefghijklmnopqrstuvwxyz";
 
     // Start is called before the first frame update
+
     void Start()
     {
-        wordDictionary = new Dictionary<string, bool>();
+        UpdateDictionary();
         //letterColorPairs.Add("a", Color.red);
         line.positionCount = 0;
         line.positionCount = 1;
         mainCamera = Camera.main;   
+    }
+
+    //[MenuItem("Tools/Read file")]
+    public void UpdateDictionaryFromRead(){
+        wordDictionary = new Dictionary<string, bool>();
+        string path = "Assets/Resources/Word Dictionaries/scrabble.txt";
+        StreamReader reader = new StreamReader(path);
+        Debug.Log(reader.ReadToEnd());
+        reader.Close();
+    }
+
+
+    public void UpdateDictionary(){
+        wordDictionary = new Dictionary<string, bool>();
+        string[] words = dictionaryFile.text.Split('\n');
+        foreach(string w in words){
+            wordDictionary.Add(w, true);
+            //Debug.Log(w);
+        }
     }
 
     public void UpdateWord(){
@@ -51,6 +76,8 @@ public class GameManager : MonoBehaviour
             line.SetPosition(i, selectedTilePoints[i]);
         }
         line.SetPosition(line.positionCount - 1, (Vector2)mainCamera.ScreenToWorldPoint(Input.mousePosition));
+
+        currentWordText.font = wordDictionary.ContainsKey(currentWord.ToUpper()) ? greenFont : transparentFont;
     }
 
     void ClearWord(){
@@ -87,6 +114,9 @@ public class GameManager : MonoBehaviour
     public string RandomLetter()
     {
         char c = alphabet[Random.Range(0,alphabet.Length)];
+        if(c == 'q'){
+            return "qu";
+        }
         return c.ToString();
     }
 
@@ -101,7 +131,21 @@ public class GameManager : MonoBehaviour
         line.SetPosition(line.positionCount - 1, (Vector2)mainCamera.ScreenToWorldPoint(Input.mousePosition));
         if(Input.GetMouseButtonUp(0)&&isSelecting){
             isSelecting = false;
-            ClearWord();
+            if (wordDictionary.ContainsKey(currentWord.ToUpper())||currentWord == "go")
+            {
+                ClearWord();
+            }
+            else{
+                for (int i = 0; i < selectedTiles.Count; i++)
+                {
+                    selectedTiles[i].isSelected = false;
+                }
+                line.positionCount = 1;
+                selectedTilePoints.Clear();
+                selectedTiles.Clear();
+                UpdateWord();
+                currentWordText.text = currentWord;
+            }
         }
     }
 }

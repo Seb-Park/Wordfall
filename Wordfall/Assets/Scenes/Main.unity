@@ -737,9 +737,12 @@ MonoBehaviour:
   mainCamera: {fileID: 0}
   ts: {fileID: 1078979998}
   currentWordText: {fileID: 712744605}
+  transparentFont: {fileID: 11400000, guid: 6c3cf81cf5c684f509aa478385e248cb, type: 2}
+  greenFont: {fileID: 11400000, guid: c015e609e2d714dec8983c29dd4eb0a3, type: 2}
   line: {fileID: 1546351846}
   selectedTiles: []
   selectedTilePoints: []
+  dictionaryFile: {fileID: 4900000, guid: 5bd5e9a9ea2344b6e8d2e8eed26f2414, type: 3}
 --- !u!4 &1078979997
 Transform:
   m_ObjectHideFlags: 0
