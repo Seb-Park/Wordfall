@@ -2,16 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+//using System.Linq;
 
 public enum GameState{PLAYERTURN, PHYSICS, WIN, LOSE}
 
 public class GameManager : MonoBehaviour
 {
+    //TODO: Generate the letters to make more fall down.
     public GameState state;
     public string currentWord;
     public bool isSelecting;
 
     public Camera mainCamera;
+
+    public TileSpawner ts;
 
     public TextMeshProUGUI currentWordText;
     public LineRenderer line;
@@ -50,6 +54,8 @@ public class GameManager : MonoBehaviour
     }
 
     void ClearWord(){
+        state = GameState.PHYSICS;
+        ts.unfreezeBlocks();
         //if it's not a word
         for (int i = 0; i < selectedTiles.Count; i++)
         {
@@ -65,9 +71,17 @@ public class GameManager : MonoBehaviour
         line.positionCount = 1;
         selectedTilePoints.Clear();
         selectedTiles.Clear();
-        Debug.Log("Clearing the lists... The length of selected Tile Points is " + selectedTilePoints.Count + " and the length of selected tiles is " + selectedTiles.Count);
+        //Debug.Log("Clearing the lists... The length of selected Tile Points is " + selectedTilePoints.Count + " and the length of selected tiles is " + selectedTiles.Count);
         UpdateWord();
         currentWordText.text = currentWord;
+        //int [] temp = ts.countColumns();
+        //Debug.Log("Before spawning accordingly the count is " + string.Join(", ", temp.Select(i => i.ToString()).ToArray()));
+        StartCoroutine(ts.spawnAccording());
+
+        //temp = ts.countColumns();
+        //Debug.Log("After spawning accordingly the count is " + string.Join(", ", temp.Select(i => i.ToString()).ToArray()));
+        //TODO: Word length = life, word = more time, scrabble probability, some timed modes, some fixed modes, one way valves on top of letter, 
+
     }
 
     public string RandomLetter()

@@ -9,20 +9,29 @@ public class LetterTile : MonoBehaviour
     public TextMeshPro textMesh;
     public GameManager gm;
 
+    public Animator anim;
+
     public bool isSelected;
     [SerializeField]
     int indexInSelection;
     [SerializeField]
     bool hasExited;
 
+    Vector2 tilesAway;
+
+    public bool randomLetter = true;
+
+    public int column, row;
+
     //long id;
     // Start is called before the first frame update
     void Start()
     {
         gm = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
-        GenerateLetter();
+        if (randomLetter) { GenerateLetter(); }
         textMesh.text = letter;
         hasExited = true;
+        column = (int)Mathf.Round(transform.position.x) + 2;
     }
 
     void GenerateLetter(){
@@ -50,10 +59,10 @@ public class LetterTile : MonoBehaviour
             gm.isSelecting = true;
         }
 
-        if (gm.selectedTiles.Count < 1)
-        {
-            Debug.Log("Starting at " + letter + " and the is selecting bool is " + gm.isSelecting);
-        }
+        //if (gm.selectedTiles.Count < 1)
+        //{
+        //    Debug.Log("Starting at " + letter + " and the is selecting bool is " + gm.isSelecting);
+        //}
 
         if (gm.isSelecting && !isSelected)
         {
@@ -63,17 +72,22 @@ public class LetterTile : MonoBehaviour
             gm.selectedTilePoints.Add(transform.position);
             gm.UpdateWord();
         }
-        if (gm.selectedTiles.Count == 1)
-        {
-            Debug.Log("Starting at " + letter + " and the isselected bool is " + isSelected);
-        }
+
+        anim.SetTrigger("Expand");
+        //if (gm.selectedTiles.Count == 1)
+        //{
+        //    Debug.Log("Starting at " + letter + " and the isselected bool is " + isSelected);
+        //}
     }
 
 
 
     public void OnColliderMouseDown()
     {
-        AddLetter();
+        if (row < 7)
+        {
+            AddLetter();
+        }
         hasExited = false;
     }
 
@@ -83,7 +97,8 @@ public class LetterTile : MonoBehaviour
         {
             if (hasExited)
             {
-                if (!isSelected)
+                tilesAway = new Vector2(Mathf.Abs(gm.selectedTiles[gm.selectedTiles.Count - 1].column - column), Mathf.Abs(gm.selectedTiles[gm.selectedTiles.Count - 1].row - row));
+                if (!isSelected&&row<7&&tilesAway.x<2&&tilesAway.y<2)//make sure it's not already selected and it's on screen//TODO: Change later if column system changed
                 {
                     AddLetter();
                 }
@@ -113,4 +128,5 @@ public class LetterTile : MonoBehaviour
     {
         OnColliderMouseExit();
     }
+
 }
