@@ -9,10 +9,9 @@ public class LetterTile : MonoBehaviour
     public TextMeshPro textMesh;
     public GameManager gm;
 
+    public bool isSelected;
     [SerializeField]
     int indexInSelection;
-    [SerializeField]
-    bool isSelected;
     [SerializeField]
     bool hasExited;
 
@@ -21,14 +20,13 @@ public class LetterTile : MonoBehaviour
     void Start()
     {
         gm = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
+        GenerateLetter();
         textMesh.text = letter;
         hasExited = true;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    void GenerateLetter(){
+        letter = gm.RandomLetter();
     }
 
     public void SubtractLetter(){
@@ -65,17 +63,21 @@ public class LetterTile : MonoBehaviour
             gm.selectedTilePoints.Add(transform.position);
             gm.UpdateWord();
         }
+        if (gm.selectedTiles.Count == 1)
+        {
+            Debug.Log("Starting at " + letter + " and the isselected bool is " + isSelected);
+        }
     }
 
 
 
-    private void OnMouseDown()
+    public void OnColliderMouseDown()
     {
         AddLetter();
         hasExited = false;
     }
 
-    private void OnMouseOver()
+    public void OnColliderMouseOver()
     {
         if (gm.isSelecting)
         {
@@ -85,7 +87,7 @@ public class LetterTile : MonoBehaviour
                 {
                     AddLetter();
                 }
-                else
+                else if(indexInSelection != 0&&indexInSelection>gm.selectedTiles.Count-3)//if it's not the first one
                 {
                     SubtractLetter();
                 }
@@ -94,8 +96,21 @@ public class LetterTile : MonoBehaviour
         }
     }
 
-    private void OnMouseExit()
+    public void OnColliderMouseExit()
     {
         hasExited = true;
+    }
+
+    private void OnMouseDown()
+    {
+        OnColliderMouseDown();
+    }
+    private void OnMouseOver()
+    {
+        OnColliderMouseOver();
+    }
+    private void OnMouseExit()
+    {
+        OnColliderMouseExit();
     }
 }

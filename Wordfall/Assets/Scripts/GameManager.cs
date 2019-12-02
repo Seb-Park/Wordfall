@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
 
     Dictionary<string, Color> letterColorPairs = new Dictionary<string, Color>();
 
+    string alphabet = "abcdefghijklmnopqrstuvwxyz";
+
     // Start is called before the first frame update
     void Start()
     {
@@ -48,12 +50,30 @@ public class GameManager : MonoBehaviour
     }
 
     void ClearWord(){
+        //if it's not a word
+        for (int i = 0; i < selectedTiles.Count; i++)
+        {
+            selectedTiles[i].isSelected = false;
+        }
+
+        //if it is a word
+        for (int i = 0; i < selectedTiles.Count; i++)
+        {
+            Destroy(selectedTiles[i].gameObject);
+        }
+
         line.positionCount = 1;
         selectedTilePoints.Clear();
         selectedTiles.Clear();
         Debug.Log("Clearing the lists... The length of selected Tile Points is " + selectedTilePoints.Count + " and the length of selected tiles is " + selectedTiles.Count);
         UpdateWord();
         currentWordText.text = currentWord;
+    }
+
+    public string RandomLetter()
+    {
+        char c = alphabet[Random.Range(0,alphabet.Length)];
+        return c.ToString();
     }
 
     // Update is called once per frame
