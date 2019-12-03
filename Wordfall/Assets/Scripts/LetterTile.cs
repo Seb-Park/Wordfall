@@ -10,6 +10,7 @@ public class LetterTile : MonoBehaviour
     public GameManager gm;
 
     public Animator anim;
+    public GameObject glow;
 
     public bool isSelected;
     [SerializeField]
@@ -40,9 +41,11 @@ public class LetterTile : MonoBehaviour
 
     public void SubtractLetter(){
         //if(isSelected){
+        TurnOffGlow();
             isSelected = false;
-            Debug.Log("Subtracting letter and turning is selected to false for letter " + '"' + letter + '"');
             for (int i = indexInSelection; i < gm.selectedTiles.Count; i++){
+                gm.selectedTiles[gm.selectedTiles.Count - 1].TurnOffGlow();
+                gm.selectedTiles[gm.selectedTiles.Count - 1].isSelected = false;
                 gm.selectedTiles.RemoveAt(gm.selectedTiles.Count-1);
                 gm.selectedTilePoints.RemoveAt(gm.selectedTilePoints.Count - 1);
             }
@@ -68,6 +71,7 @@ public class LetterTile : MonoBehaviour
         if (gm.isSelecting && !isSelected)
         {
             isSelected = true;
+            TurnOnGlow();
             indexInSelection = gm.selectedTiles.Count;
             gm.selectedTiles.Add(this);
             gm.selectedTilePoints.Add(transform.position);
@@ -81,7 +85,13 @@ public class LetterTile : MonoBehaviour
         //}
     }
 
+    public void TurnOnGlow(){
+        glow.SetActive(true);
+    }
 
+    public void TurnOffGlow(){
+        glow.SetActive(false);
+    }
 
     public void OnColliderMouseDown()
     {
@@ -108,7 +118,8 @@ public class LetterTile : MonoBehaviour
                     if (indexInSelection < gm.selectedTiles.Count - 1)
                     {
                         SubtractLetter();
-                        isSelected = true;
+                        isSelected = true;//This fixes the double selection glitch
+                        TurnOnGlow();
                     }
                     else{
                         SubtractLetter();

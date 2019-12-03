@@ -50,13 +50,14 @@ public class TileSpawner : MonoBehaviour
             LetterTile letterTileComponent = go.GetComponent<LetterTile>();
             go.transform.position = new Vector2(letterTileComponent.column-2, letterTileComponent.row - 3);
             letterTileComponent.isSelected = false;
+            letterTileComponent.TurnOffGlow();
 
             foreach (GameObject go2 in tileGOs){
                 LetterTile letterTileComponent2 = go2.GetComponent<LetterTile>();
                 if(go2!=go&&letterTileComponent.column == letterTileComponent2.column&&letterTileComponent.row == letterTileComponent2.row){
                     Destroy(go2);
-                    Debug.Log("Tile was destroyed because columns were " + letterTileComponent.column + letterTileComponent2.column
-                              + " and rows were " + letterTileComponent.row + letterTileComponent2.row);
+                    //Debug.Log("Tile was destroyed because columns were " + letterTileComponent.column + letterTileComponent2.column
+                              //+ " and rows were " + letterTileComponent.row + letterTileComponent2.row);
                 }
             }
 
@@ -79,7 +80,7 @@ public class TileSpawner : MonoBehaviour
         foreach(GameObject go in tileGOs){
             go.GetComponent<LetterTile>().row = (int)Mathf.Round(go.transform.position.y) + 3;
         }
-        Debug.Log("Freezing blocks");
+        //Debug.Log("Freezing blocks");
     }
 
     public int[] countColumns(){

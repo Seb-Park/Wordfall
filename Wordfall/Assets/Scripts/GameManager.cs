@@ -20,11 +20,14 @@ public class GameManager : MonoBehaviour
     public TileSpawner ts;
 
     public TextMeshProUGUI currentWordText;
+    public TextMeshProUGUI scoreText;
     public TMP_FontAsset transparentFont, greenFont;
     public LineRenderer line;
 
     public List<LetterTile> selectedTiles;
     public List<Vector2> selectedTilePoints;
+
+    public int score;
 
     Dictionary<string, bool> wordDictionary;
 
@@ -43,7 +46,8 @@ public class GameManager : MonoBehaviour
         //letterColorPairs.Add("a", Color.red);
         line.positionCount = 0;
         line.positionCount = 1;
-        mainCamera = Camera.main;   
+        mainCamera = Camera.main;
+        score = 0;
     }
 
     //[MenuItem("Tools/Read file")]
@@ -88,6 +92,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < selectedTiles.Count; i++)
         {
             selectedTiles[i].isSelected = false;
+            selectedTiles[i].TurnOffGlow();
         }
 
         //if it is a word
@@ -96,9 +101,12 @@ public class GameManager : MonoBehaviour
             Destroy(selectedTiles[i].gameObject);
         }
 
+        addScore((int)(Mathf.Pow(currentWord.Length, 2)/2));
+
         line.positionCount = 1;
         selectedTilePoints.Clear();
         selectedTiles.Clear();
+
         //Debug.Log("Clearing the lists... The length of selected Tile Points is " + selectedTilePoints.Count + " and the length of selected tiles is " + selectedTiles.Count);
         UpdateWord();
         currentWordText.text = currentWord;
@@ -110,6 +118,11 @@ public class GameManager : MonoBehaviour
         //Debug.Log("After spawning accordingly the count is " + string.Join(", ", temp.Select(i => i.ToString()).ToArray()));
         //TODO: Word length = life, word = more time, scrabble probability, some timed modes, some fixed modes, one way valves on top of letter, 
 
+    }
+
+    public void addScore(int increase){
+        score += increase;
+        scoreText.text = score.ToString();
     }
 
     public string RandomLetter()
@@ -132,7 +145,7 @@ public class GameManager : MonoBehaviour
         line.SetPosition(line.positionCount - 1, (Vector2)mainCamera.ScreenToWorldPoint(Input.mousePosition));
         if(Input.GetMouseButtonUp(0)&&isSelecting){
             isSelecting = false;
-            if (wordDictionary.ContainsKey(currentWord.ToUpper())||currentWord == "ok")
+            if (wordDictionary.ContainsKey(currentWord.ToUpper()))
             {
                 ClearWord();
             }
@@ -140,6 +153,7 @@ public class GameManager : MonoBehaviour
                 for (int i = 0; i < selectedTiles.Count; i++)
                 {
                     selectedTiles[i].isSelected = false;
+                    selectedTiles[i].TurnOffGlow();
                 }
                 line.positionCount = 1;
                 selectedTilePoints.Clear();
