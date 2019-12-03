@@ -21,11 +21,20 @@ public class GameManager : MonoBehaviour
 
     public TextMeshProUGUI currentWordText;
     public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI timeText;
     public TMP_FontAsset transparentFont, greenFont;
     public LineRenderer line;
 
     public List<LetterTile> selectedTiles;
     public List<Vector2> selectedTilePoints;
+
+    public bool started;
+
+    public float timeStarted;
+    public float timeLeft;
+    public float totalTime;
+
+    public GameObject countdownCanvas, endCanvas;
 
     public int score;
 
@@ -86,6 +95,11 @@ public class GameManager : MonoBehaviour
     }
 
     void ClearWord(){
+        if (!started)
+        {
+            started = true;
+            timeStarted = Time.time;
+        }
         state = GameState.PHYSICS;
         ts.unfreezeBlocks();
         //if it's not a word
@@ -160,6 +174,21 @@ public class GameManager : MonoBehaviour
                 selectedTiles.Clear();
                 UpdateWord();
                 currentWordText.text = currentWord;
+            }
+        }
+        if(started){
+            timeLeft = totalTime - (Time.time - timeStarted);
+            timeText.text = timeLeft.ToString("f0");
+            if(timeLeft<=5){
+                countdownCanvas.SetActive(true);
+            }
+            if(timeLeft<=0){
+                isSelecting = false;
+                state = GameState.WIN;
+                endCanvas.SetActive(true);
+            }
+            if(timeLeft<-2){
+                countdownCanvas.SetActive(false);
             }
         }
     }
