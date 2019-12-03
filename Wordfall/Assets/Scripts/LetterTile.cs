@@ -41,6 +41,7 @@ public class LetterTile : MonoBehaviour
     public void SubtractLetter(){
         //if(isSelected){
             isSelected = false;
+            Debug.Log("Subtracting letter and turning is selected to false for letter " + '"' + letter + '"');
             for (int i = indexInSelection; i < gm.selectedTiles.Count; i++){
                 gm.selectedTiles.RemoveAt(gm.selectedTiles.Count-1);
                 gm.selectedTilePoints.RemoveAt(gm.selectedTilePoints.Count - 1);
@@ -104,7 +105,14 @@ public class LetterTile : MonoBehaviour
                 }
                 else if(indexInSelection != 0&&indexInSelection>gm.selectedTiles.Count-3)//if it's not the first one
                 {
-                    SubtractLetter();
+                    if (indexInSelection < gm.selectedTiles.Count - 1)
+                    {
+                        SubtractLetter();
+                        isSelected = true;
+                    }
+                    else{
+                        SubtractLetter();
+                    }
                 }
                 hasExited = false;
             }

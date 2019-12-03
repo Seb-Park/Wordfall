@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour
     public TextAsset dictionaryFile;
 
     string alphabet = "abcdefghijklmnopqrstuvwxyz";
+    public int[] letterWeights;
 
     // Start is called before the first frame update
 
@@ -113,8 +114,8 @@ public class GameManager : MonoBehaviour
 
     public string RandomLetter()
     {
-        char c = alphabet[Random.Range(0,alphabet.Length)];
-        if(c == 'q'){
+        char c = alphabet[CustomMath.WeightedRandomize(letterWeights)];
+        if (c == 'q'){
             return "qu";
         }
         return c.ToString();
@@ -131,7 +132,7 @@ public class GameManager : MonoBehaviour
         line.SetPosition(line.positionCount - 1, (Vector2)mainCamera.ScreenToWorldPoint(Input.mousePosition));
         if(Input.GetMouseButtonUp(0)&&isSelecting){
             isSelecting = false;
-            if (wordDictionary.ContainsKey(currentWord.ToUpper())||currentWord == "go")
+            if (wordDictionary.ContainsKey(currentWord.ToUpper())||currentWord == "ok")
             {
                 ClearWord();
             }

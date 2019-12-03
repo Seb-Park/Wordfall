@@ -477,7 +477,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.9, y: 1}
+  m_Size: {x: 0.8, y: 1}
   m_EdgeRadius: 0
 --- !u!114 &4923669081896870223
 MonoBehaviour:
@@ -498,6 +498,7 @@ MonoBehaviour:
   isSelected: 0
   indexInSelection: 0
   hasExited: 0
+  randomLetter: 1
   column: 0
   row: 0
 --- !u!95 &-4756548896086046778
