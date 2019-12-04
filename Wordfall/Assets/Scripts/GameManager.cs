@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.IO;
+using UnityEngine.SceneManagement;
 //using UnityEditor;
 //using System.Linq;
 
@@ -22,6 +23,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI currentWordText;
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI timeText;
+    public TextMeshProUGUI scoreNumberText;
     public TMP_FontAsset transparentFont, greenFont;
     public LineRenderer line;
 
@@ -148,6 +150,29 @@ public class GameManager : MonoBehaviour
         return c.ToString();
     }
 
+    public void Deselect(){
+        for (int i = 0; i < selectedTiles.Count; i++)
+        {
+            selectedTiles[i].isSelected = false;
+            selectedTiles[i].TurnOffGlow();
+        }
+        line.positionCount = 1;
+        selectedTilePoints.Clear();
+        selectedTiles.Clear();
+        UpdateWord();
+        currentWordText.text = currentWord;
+    }
+
+    public IEnumerator scoreAnimate(int endNumber){
+        float intervalTime = 2.0f / endNumber;
+        //Debug.Log(intervalTime);
+        for (int i = 0; i <= endNumber; i++){
+            scoreNumberText.text = i.ToString();
+            yield return new WaitForSeconds(intervalTime);
+            //Debug.Log(i);
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -164,32 +189,32 @@ public class GameManager : MonoBehaviour
                 ClearWord();
             }
             else{
-                for (int i = 0; i < selectedTiles.Count; i++)
-                {
-                    selectedTiles[i].isSelected = false;
-                    selectedTiles[i].TurnOffGlow();
-                }
-                line.positionCount = 1;
-                selectedTilePoints.Clear();
-                selectedTiles.Clear();
-                UpdateWord();
-                currentWordText.text = currentWord;
+                Deselect();
             }
         }
         if(started){
             timeLeft = totalTime - (Time.time - timeStarted);
-            timeText.text = timeLeft.ToString("f0");
+            if (!(state == GameState.WIN))
+            {
+                timeText.text = timeLeft.ToString("f0");
+            }
             if(timeLeft<=5){
                 countdownCanvas.SetActive(true);
             }
             if(timeLeft<=0){
                 isSelecting = false;
+                Deselect();
                 state = GameState.WIN;
                 endCanvas.SetActive(true);
             }
             if(timeLeft<-2){
                 countdownCanvas.SetActive(false);
+                scoreNumberText.gameObject.SetActive(true);
             }
         }
+    }
+
+    public void loadScene(int sceneNumber){
+        SceneManager.LoadScene(sceneNumber);
     }
 }
