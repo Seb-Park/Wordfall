@@ -117,7 +117,9 @@ public class GameManager : MonoBehaviour
             Destroy(selectedTiles[i].gameObject);
         }
 
-        addScore((int)(Mathf.Pow(currentWord.Length, 2)/2));
+        //addScore((int)(Mathf.Pow(currentWord.Length, 2)/2));
+        addScore((int)Mathf.Pow(2, currentWord.Length-1));
+
 
         line.positionCount = 1;
         selectedTilePoints.Clear();

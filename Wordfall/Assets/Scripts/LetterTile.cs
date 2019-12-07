@@ -23,7 +23,7 @@ public class LetterTile : MonoBehaviour
     public bool randomLetter = true;
 
     public int column, row;
-
+    //TODO: Change color of tiles, dark mode, upper/lower case
     //long id;
     // Start is called before the first frame update
     void Start()
