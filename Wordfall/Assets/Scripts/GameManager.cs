@@ -119,7 +119,8 @@ public class GameManager : MonoBehaviour
 
         //addScore((int)(Mathf.Pow(currentWord.Length, 2)/2));
         addScore((int)Mathf.Pow(2, currentWord.Length-1));
-
+        if(timeLeft>6)timeStarted += currentWord.Length;
+        //TODO: See words that you played during that round and your most frequent words
 
         line.positionCount = 1;
         selectedTilePoints.Clear();
