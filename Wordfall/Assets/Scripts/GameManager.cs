@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using System.IO;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 //using UnityEditor;
 //using System.Linq;
 
@@ -55,6 +56,14 @@ public class GameManager : MonoBehaviour
 
     public bool hasUpdatedHigh;
 
+    public bool isPaused;
+    public float startTimeBeforePaused;
+    public GameObject pausedCanvas;
+    public Animator pausedAnimator;
+    public GameObject pauseButton;
+
+    public GameObject FadeInTransition;
+
     // Start is called before the first frame update
 
     void Start()
@@ -84,6 +93,27 @@ public class GameManager : MonoBehaviour
             wordDictionary.Add(w, true);
             //Debug.Log(w);
         }
+    }
+
+    public void Pause(){
+        if(!isPaused){
+            pausedCanvas.SetActive(true);
+            //pausedAnimator.SetTrigger("pause");
+            isPaused = true;
+            startTimeBeforePaused = Time.time;
+        }
+        else
+        {
+            timeStarted += Time.time - startTimeBeforePaused;
+            StartCoroutine(Unpause());
+            isPaused = false;
+        }
+    }
+
+    public IEnumerator Unpause(){
+        pausedAnimator.SetTrigger("unpause");
+        yield return new WaitForSeconds(2f);
+        pausedCanvas.SetActive(false);
     }
 
     public void UpdateWord(){
@@ -182,16 +212,23 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void ShowFadeInTransition(){
+        FadeInTransition.SetActive(true);
+    }
+
     // Update is called once per frame
     void Update()
     {
         if (isSelecting)
         {
+            pauseButton.SetActive(false);
             currentWordText.text = currentWord;
-
         }
         line.SetPosition(line.positionCount - 1, (Vector2)mainCamera.ScreenToWorldPoint(Input.mousePosition));
         if(Input.GetMouseButtonUp(0)&&isSelecting){
+            if(timeLeft>7){
+                pauseButton.SetActive(true);
+            }
             isSelecting = false;
             if (wordDictionary.ContainsKey(currentWord.ToUpper()))
             {
@@ -201,11 +238,14 @@ public class GameManager : MonoBehaviour
                 Deselect();
             }
         }
-        if(started){
+        if(started&&!isPaused){
             timeLeft = totalTime - (Time.time - timeStarted);
             if (!(state == GameState.WIN))
             {
                 timeText.text = timeLeft.ToString("f0");
+            }
+            if(timeLeft<=6){
+                pauseButton.SetActive(false);
             }
             if(timeLeft<=5){
                 countdownCanvas.SetActive(true);
@@ -242,6 +282,21 @@ public class GameManager : MonoBehaviour
     }
 
     public void loadScene(int sceneNumber){
-        SceneManager.LoadScene(sceneNumber);
+        SceneManager.LoadSceneAsync(sceneNumber);
+    }
+
+    public void Restart(){
+        StartCoroutine(WaitBeforeLoadingScene(SceneManager.GetActiveScene().buildIndex, .75f));
+    }
+
+    public void ExitToMenu()
+    {
+        StartCoroutine(WaitBeforeLoadingScene(0, .75f));
+    }
+
+    public IEnumerator WaitBeforeLoadingScene(int scene, float loadTime)
+    {
+        yield return new WaitForSeconds(loadTime);
+        SceneManager.LoadScene(scene);
     }
 }
