@@ -96,13 +96,26 @@ public class GameManager : MonoBehaviour
     }
 
     public void Pause(){
-        if(!isPaused){
-            pausedCanvas.SetActive(true);
-            //pausedAnimator.SetTrigger("pause");
-            isPaused = true;
-            startTimeBeforePaused = Time.time;
+        if (started)
+        {
+            if (!isPaused)
+            {
+                pausedCanvas.SetActive(true);
+                //pausedAnimator.SetTrigger("pause");
+                isPaused = true;
+                startTimeBeforePaused = Time.time;
+            }
+            else
+            {
+                timeStarted += Time.time - startTimeBeforePaused;
+                StartCoroutine(Unpause());
+                isPaused = false;
+            }
         }
-        else
+    }
+
+    public void UnpauseVoid(){
+        if (isPaused)
         {
             timeStarted += Time.time - startTimeBeforePaused;
             StartCoroutine(Unpause());
@@ -224,11 +237,15 @@ public class GameManager : MonoBehaviour
             pauseButton.SetActive(false);
             currentWordText.text = currentWord;
         }
-        line.SetPosition(line.positionCount - 1, (Vector2)mainCamera.ScreenToWorldPoint(Input.mousePosition));
-        if(Input.GetMouseButtonUp(0)&&isSelecting){
-            if(timeLeft>7){
+        else{
+            if (timeLeft > 7)
+            {
                 pauseButton.SetActive(true);
             }
+        }
+        line.SetPosition(line.positionCount - 1, (Vector2)mainCamera.ScreenToWorldPoint(Input.mousePosition));
+        if(Input.GetMouseButtonUp(0)&&isSelecting){
+
             isSelecting = false;
             if (wordDictionary.ContainsKey(currentWord.ToUpper()))
             {
