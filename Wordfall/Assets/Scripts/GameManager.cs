@@ -24,6 +24,10 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI timeText;
     public TextMeshProUGUI scoreNumberText;
+    public TextMeshProUGUI highScoreText;
+
+    public TextMeshProUGUI scoreTitleText;
+
     public TMP_FontAsset transparentFont, greenFont;
     public LineRenderer line;
 
@@ -48,6 +52,8 @@ public class GameManager : MonoBehaviour
 
     string alphabet = "abcdefghijklmnopqrstuvwxyz";
     public int[] letterWeights;
+
+    public bool hasUpdatedHigh;
 
     // Start is called before the first frame update
 
@@ -118,8 +124,8 @@ public class GameManager : MonoBehaviour
         }
 
         //addScore((int)(Mathf.Pow(currentWord.Length, 2)/2));
-        addScore((int)Mathf.Pow(2, currentWord.Length-1));
-        if(timeLeft>6)timeStarted += currentWord.Length;
+        if(started)addScore((int)Mathf.Pow(2, currentWord.Length-1));
+        if(timeLeft>6&&started)timeStarted += currentWord.Length;
         //TODO: See words that you played during that round and your most frequent words
 
         line.positionCount = 1;
@@ -209,12 +215,30 @@ public class GameManager : MonoBehaviour
                 Deselect();
                 state = GameState.WIN;
                 endCanvas.SetActive(true);
+                if(!hasUpdatedHigh){
+                    SaveHigh(score);
+                }
             }
             if(timeLeft<-2){
                 countdownCanvas.SetActive(false);
                 scoreNumberText.gameObject.SetActive(true);
             }
         }
+    }
+
+    public void SaveHigh(int potentialNewHigh){
+        int? oldHigh = SaveSystem.LoadInt("timedHigh.seb");
+        if (oldHigh == null || potentialNewHigh > oldHigh)
+        {
+            scoreTitleText.text = "New High Score!";
+            SaveSystem.SaveInt(potentialNewHigh, "timedHigh.seb");
+            highScoreText.text = potentialNewHigh.ToString();
+        }
+        else
+        {
+            highScoreText.text = oldHigh.ToString();
+        }
+        hasUpdatedHigh = false;
     }
 
     public void loadScene(int sceneNumber){
