@@ -24,7 +24,7 @@ public class FallingBackgroundTile : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         transform.Translate(new Vector2(0, -speed));
         if(transform.localPosition.y<-1000){
