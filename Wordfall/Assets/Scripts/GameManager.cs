@@ -143,6 +143,9 @@ public class GameManager : MonoBehaviour
         line.SetPosition(line.positionCount - 1, (Vector2)mainCamera.ScreenToWorldPoint(Input.mousePosition));
 
         currentWordText.font = wordDictionary.ContainsKey(currentWord.ToUpper()) ? greenFont : transparentFont;
+        if (state.Equals(GameState.PLAYERTURN)) { Vibration.Vibrate(20);
+            Debug.Log("Vibrating");
+        }
     }
 
     void ClearWord(){
